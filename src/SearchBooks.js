@@ -16,18 +16,18 @@ class SearchBooks extends React.Component {
     searchResults: []
   }
 
-  handleUpdateQuery = (query) => {
-    this.setState({ query: query.trim() })
+  updateQuery = (query) => {
+    this.setState({ query })
     this.updateResults(query)
   }
 
   updateResults = (query) => {
-    if (query) {
+    if (query.length > 0) {
       BooksAPI.search(query).then(response => {
-        if (response.error) {
-          this.setState({ searchResults: [] })
-        } else {
+        if (response) {
           this.setState({ searchResults: response })
+        } else {
+          this.setState({ searchResults: [] })
         }
       })
     } else {
@@ -38,7 +38,6 @@ class SearchBooks extends React.Component {
   render() {
     const { books, onUpdateShelf } = this.props
     const { query, searchResults } = this.state
-    let shelf
 
     return (
       <div className="search-books">
@@ -50,7 +49,7 @@ class SearchBooks extends React.Component {
               type="text"
               placeholder="Search by title or author"
               value={query || ''}
-              onChange={(event) => this.handleUpdateQuery(event.target.value)}
+              onChange={(event) => this.updateQuery(event.target.value)}
             />
 
           </div>
@@ -58,8 +57,10 @@ class SearchBooks extends React.Component {
         <div className="search-books-results">
           <ol className="books-grid">
           {searchResults.map(searchResult => {
+            //console.log(searchResult);
+            let shelf = 'none';
             books.map(book => (
-              shelf = book.id === searchResult.id ? book.shelf : 'none'
+              book.id === searchResult.id ? shelf = book.shelf : ''
             ))
             return (
               <li key={searchResult.id}>
